@@ -18,8 +18,8 @@ main :: proc() {
     if !os.exists("libzip/" + LIBZIP){
         cd("libzip")
         when ODIN_OS == .Linux {
-            run("cmake", ".")
-            run("cmake", "--build", ".")
+            run("gcc", "-c",  "src/zip.c", "-o", "zip.o")
+            run("ar", "rcs", "libzip.a", "zip.o")
         }
         else {
             run("cl", "/c", "src/zip.c")
