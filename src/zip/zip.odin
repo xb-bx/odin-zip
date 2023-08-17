@@ -5,7 +5,11 @@ import "core:strings"
 import "core:mem"
 import "core:slice"
 import "core:fmt"
-foreign import libzip "libzip:libzip.a"
+when ODIN_OS == .Windows {
+    foreign import libzip "libzip:zip.lib"
+} else when ODIN_OS == .Linux {
+    foreign import libzip "libzip:libzip.a"
+}
 foreign libzip {
     zip_strerror :: proc(err: ZipError) -> cstring ---
     zip_open :: proc(zipname: cstring, level: c.int, mode: c.char) -> ^Zip ---
@@ -182,10 +186,22 @@ entry_close :: proc(zip: ^Zip) -> ZipError {
 entry_open_by_index :: proc(zip: ^Zip, index: int) -> ZipError {
     return zip_entry_openbyindex(zip, c.size_t(index))
 }
+alloc :: proc (size: int) -> rawptr {
+    when ODIN_OS == .Windows {
+        bytes, ok := mem.alloc(size)
+        if ok != .None {
+            panic("failed to allocate memory")
+        }
+        return bytes
+    }
+    else {
+        return mem.alloc(size)
+    }
+}
 create :: proc(zip_name: string, files: []string) -> ZipError {
     zipname := strings.clone_to_cstring(zip_name)
     defer delete(zipname)
-    c_entries := transmute([^]cstring)mem.alloc(len(files) * 8);
+    c_entries := transmute([^]cstring)alloc(len(files) * 8);
     for file, i in files {
         c_entries[i] = strings.clone_to_cstring(file)
     }
@@ -198,7 +214,7 @@ create :: proc(zip_name: string, files: []string) -> ZipError {
     return zip_create(zipname, c_entries, len(files))
 }
 entries_delete :: proc(zip: ^Zip, entries: []string) -> (int, ZipError) {
-    c_entries := transmute([^]cstring)mem.alloc(len(entries) * 8);
+    c_entries := transmute([^]cstring)alloc(len(entries) * 8);
     for entry, i in entries {
         c_entries[i] = strings.clone_to_cstring(entry)
     }
