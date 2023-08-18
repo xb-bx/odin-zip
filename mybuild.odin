@@ -27,5 +27,5 @@ main :: proc() {
         }
         cd("..")
     }
-    run("odin", "build", "src/zfm", "-out:" + ZFM, "-collection:zip=src", "-collection:libzip=libzip")
+    odin_build("src/zfm", collections = { "zip" = "src", "libzip" = "libzip" }, output = ZFM)
 }
