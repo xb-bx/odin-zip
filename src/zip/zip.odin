@@ -186,16 +186,11 @@ entry_open_by_index :: proc(zip: ^Zip, index: int) -> ZipError {
     return zip_entry_openbyindex(zip, c.size_t(index))
 }
 alloc :: proc (size: int) -> rawptr {
-    when ODIN_OS == .Windows {
-        bytes, ok := mem.alloc(size)
-        if ok != .None {
-            panic("failed to allocate memory")
-        }
-        return bytes
+    bytes, ok := mem.alloc(size)
+    if ok != .None {
+        panic("failed to allocate memory")
     }
-    else {
-        return mem.alloc(size)
-    }
+    return bytes
 }
 create :: proc(zip_name: string, files: []string) -> ZipError {
     zipname := strings.clone_to_cstring(zip_name)
