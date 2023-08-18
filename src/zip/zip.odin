@@ -119,7 +119,6 @@ entry_read_to :: proc(zip: ^Zip, buf: []u8) -> (int, ZipError) {
 }
 entry_read :: proc(zip: ^Zip) -> ([]u8, ZipError) {
     size := entry_uncompressed_size(zip)
-    fmt.println(size)
     buf := make([]u8, size) 
     read, err := entry_read_to(zip, buf)
     if err != .ENONE {
