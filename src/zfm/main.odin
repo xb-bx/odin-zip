@@ -5,7 +5,7 @@ import "zip:zip"
 import "core:strings"
 import "core:mem"
 import "core:slice"
-import "core:runtime"
+import "base:runtime"
 import "core:c"
 
 
