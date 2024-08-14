@@ -7,7 +7,7 @@ import "core:slice"
 import "core:fmt"
 when ODIN_OS == .Windows {
     foreign import libzip "libzip:zip.lib"
-} else when ODIN_OS == .Linux {
+} else {
     foreign import libzip "libzip:libzip.a"
 }
 foreign libzip {
